@@ -1,0 +1,6 @@
+{
+    "description": {
+        "message": "YouTubeコメントのタイムスタンプを押したときのページ最上部へのスクロールを阻止します。",
+        "description": "description in English."
+    }
+}

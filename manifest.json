@@ -2,10 +2,11 @@
     "manifest_version": 3,
     "name": "prevent timestamp scrolling for YouTube",
     "version": "1.0.0",
-    "description": "This extension prevents scrolling to the top of the page when you click on a timestamp in a comment.",
+    "description": "__MSG_description__",
     "author": {
         "email": "akisatoon@gmail.com"
     },
+    "default_locale": "en",
     "icons": {
         "16": "./icons/icon16.png",
         "48": "./icons/icon48.png",
