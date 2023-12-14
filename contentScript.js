@@ -21,8 +21,6 @@ document.addEventListener("click", (event) => {
 
             const videoEle = document.querySelector("video");
 
-            console.log(time);
-
             videoEle.currentTime = parseInt(time);
 
             event.preventDefault();
@@ -30,6 +28,10 @@ document.addEventListener("click", (event) => {
             event.stopPropagation();
 
             event.stopImmediatePropagation();
+
+            // debug用
+            console.log(`time: ${time}`);
+            console.log("prevent scroll!");
         }
     }
 
