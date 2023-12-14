@@ -6,7 +6,7 @@ document.addEventListener("click", (event) => {
     // 動画再生ページかどうか
     if (location.pathname == "/watch") {
 
-        const videoID = location.search.slice(3);
+        const videoID = location.search.slice(3, 14);
 
         const re = RegExp(`t=[0-9]+s`);
 
