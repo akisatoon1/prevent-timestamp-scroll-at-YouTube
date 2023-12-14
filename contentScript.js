@@ -17,11 +17,13 @@ document.addEventListener("click", (event) => {
 
             re.test(event.target.getAttribute("href"))
         ) {
-            const time = event.target.getAttribute("href").slice(-3, -1);
+            const time = event.target.getAttribute("href").match(re)[0].slice(2, -1);
 
             const videoEle = document.querySelector("video");
 
-            videoEle.currentTime = time;
+            console.log(time);
+
+            videoEle.currentTime = parseInt(time);
 
             event.preventDefault();
 
