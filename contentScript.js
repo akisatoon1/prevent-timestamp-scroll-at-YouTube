@@ -6,18 +6,34 @@ document.addEventListener("click", (event) => {
     // 動画再生ページかどうか
     if (location.pathname == "/watch") {
 
-        const videoID = location.search.slice(3, 14);
-
         const re = RegExp(`t=[0-9]+s`);
 
-        // クリックしたリンクがタイムスタンプかどうか
-        if (event.target.tagName == "A" &&
+        let target_ele = event.target;
 
-            event.target.classList.value == "yt-simple-endpoint style-scope yt-formatted-string" &&
+        // web翻訳している場合のため
+        if (target_ele.tagName == "FONT" &&
 
-            re.test(event.target.getAttribute("href"))
+            target_ele.getAttribute("style") == "vertical-align: inherit;" &&
+
+            target_ele.parentElement &&
+
+            target_ele.parentElement.tagName == "FONT" &&
+
+            target_ele.parentElement.getAttribute("style") == "vertical-align: inherit;" &&
+
+            target_ele.parentElement.parentElement
         ) {
-            const time = event.target.getAttribute("href").match(re)[0].slice(2, -1);
+            target_ele = target_ele.parentElement.parentElement;
+        }
+
+        // クリックしたリンクがタイムスタンプかどうか
+        if (target_ele.tagName == "A" &&
+
+            target_ele.classList.value == "yt-simple-endpoint style-scope yt-formatted-string" &&
+
+            re.test(target_ele.getAttribute("href"))
+        ) {
+            const time = target_ele.getAttribute("href").match(re)[0].slice(2, -1);
 
             const videoEle = document.querySelector("video");
 
