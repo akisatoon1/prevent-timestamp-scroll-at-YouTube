@@ -6,6 +6,8 @@ document.addEventListener("click", (event) => {
     // 動画再生ページかどうか
     if (location.pathname == "/watch") {
 
+        const videoID = location.search.slice(3, 14);
+
         const re = RegExp(`t=[0-9]+s`);
 
         let target_ele = event.target;
@@ -35,7 +37,7 @@ document.addEventListener("click", (event) => {
 
             re.test(target_ele.getAttribute("href"))
         ) {
-            const time = target_ele.getAttribute("href").match(re)[0].slice(2, -1);
+            const time = target_ele.getAttribute("href").match(re)[0].slice(2, -1)
 
             const videoEle = document.querySelector("video");
 
@@ -50,6 +52,30 @@ document.addEventListener("click", (event) => {
             // debug用
             console.log(`time: ${time}`);
             console.log("prevent scroll!");
+        }
+
+        // 0秒の時
+        else if (target_ele.tagName == "A" &&
+
+            target_ele.classList.value == "yt-simple-endpoint style-scope yt-formatted-string" &&
+
+            target_ele.getAttribute("href") == `/watch?v=${videoID}`
+        ) {
+
+            const videoEle = document.querySelector("video");
+
+            videoEle.currentTime = 0;
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            event.stopImmediatePropagation();
+
+            // debug用
+            console.log("time: 0");
+            console.log("prevent scroll!");
+
         }
     }
 
