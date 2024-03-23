@@ -1,5 +1,32 @@
 "use strict";
 
+//
+// chapterをクリックするとき、endpointの子要素のどれかをクリックすることになる。
+// 最大3回まで親要素をたどって、endpointが見つける。
+//
+
+// chapterのendpointか判定
+function is_endpoint(ele, re) {
+    return (ele &&
+        ele.tagName == "A" &&
+        ele.getAttribute("id") == "endpoint" &&
+        ele.classList.value == "yt-simple-endpoint style-scope ytd-macro-markers-list-item-renderer" &&
+        re.test(ele.getAttribute("href"))
+    );
+}
+
+// chapterのendpointを返す
+function return_endpoint(ele, re) {
+    for (let i = 0; i < 4; i++) {
+        if (!ele) break;
+        if (is_endpoint(ele, re)) {
+            return ele;
+        }
+        ele = ele.parentElement;
+    }
+    return null;
+}
+
 // クリックした時
 document.addEventListener("click", (event) => {
 
@@ -52,10 +79,11 @@ document.addEventListener("click", (event) => {
             // debug用
             console.log(`time: ${time}`);
             console.log("prevent scroll!");
+            return;
         }
 
         // 0秒の時
-        else if (target_ele.tagName == "A" &&
+        if (target_ele.tagName == "A" &&
 
             target_ele.classList.value == "yt-simple-endpoint style-scope yt-formatted-string" &&
 
@@ -75,7 +103,28 @@ document.addEventListener("click", (event) => {
             // debug用
             console.log("time: 0");
             console.log("prevent scroll!");
+            return;
+        }
 
+        // chapter
+        const endpoint = return_endpoint(target_ele, re);
+        if (endpoint) {
+            const time = endpoint.getAttribute("href").match(re)[0].slice(2, -1)
+
+            const videoEle = document.querySelector("video");
+
+            videoEle.currentTime = parseInt(time);
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            event.stopImmediatePropagation();
+
+            // debug用
+            console.log(`time: ${time}`);
+            console.log("prevent scroll!");
+            return;
         }
     }
 
