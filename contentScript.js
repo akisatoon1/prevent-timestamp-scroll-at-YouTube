@@ -28,7 +28,7 @@ function return_endpoint(ele, re) {
 }
 
 function return_time(ele, re) {
-    return ele.getAttribute("href").match(re)[0].slice(2, -1);
+    return ele.getAttribute("href").match(re)[0].slice(16, -1);
 }
 
 // クリックした時
@@ -39,7 +39,7 @@ document.addEventListener("click", (event) => {
 
         const videoID = location.search.slice(3, 14);
 
-        const re = RegExp(`t=[0-9]+s`);
+        const re = RegExp(`v=${videoID}&t=[0-9]+s`);
 
         let target_ele = event.target;
 
