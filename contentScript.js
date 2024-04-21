@@ -27,6 +27,10 @@ function return_endpoint(ele, re) {
     return null;
 }
 
+function return_time(ele, re) {
+    return ele.getAttribute("href").match(re)[0].slice(2, -1);
+}
+
 // クリックした時
 document.addEventListener("click", (event) => {
 
@@ -64,7 +68,7 @@ document.addEventListener("click", (event) => {
 
             re.test(target_ele.getAttribute("href"))
         ) {
-            const time = target_ele.getAttribute("href").match(re)[0].slice(2, -1)
+            const time = return_time(target_ele, re);
 
             const videoEle = document.querySelector("video");
 
@@ -85,7 +89,7 @@ document.addEventListener("click", (event) => {
         // 0秒の時
         if (target_ele.tagName == "A" &&
 
-            target_ele.classList.value == "yt-simple-endpoint style-scope yt-formatted-string" &&
+            target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--display-type yt-core-attributed-string__link--call-to-action-color" &&
 
             target_ele.getAttribute("href") == `/watch?v=${videoID}`
         ) {
@@ -109,7 +113,7 @@ document.addEventListener("click", (event) => {
         // chapter
         const endpoint = return_endpoint(target_ele, re);
         if (endpoint) {
-            const time = endpoint.getAttribute("href").match(re)[0].slice(2, -1)
+            const time = return_time(endpoint, re);
 
             const videoEle = document.querySelector("video");
 
