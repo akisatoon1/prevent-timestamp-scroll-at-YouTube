@@ -62,9 +62,7 @@ document.addEventListener("click", (event) => {
         // クリックしたリンクがタイムスタンプかどうか
         if (target_ele.tagName == "A" &&
 
-            (target_ele.classList.value == "yt-simple-endpoint style-scope yt-formatted-string" ||
-                target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--display-type yt-core-attributed-string__link--call-to-action-color"
-            ) &&
+            target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--call-to-action-color" &&
 
             re.test(target_ele.getAttribute("href"))
         ) {
@@ -89,7 +87,7 @@ document.addEventListener("click", (event) => {
         // 0秒の時
         if (target_ele.tagName == "A" &&
 
-            target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--display-type yt-core-attributed-string__link--call-to-action-color" &&
+            target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--call-to-action-color" &&
 
             target_ele.getAttribute("href") == `/watch?v=${videoID}`
         ) {
