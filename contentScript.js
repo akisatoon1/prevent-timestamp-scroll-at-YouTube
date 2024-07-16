@@ -130,7 +130,12 @@ function isOnThisVideo(videoId, ele) {
 }
 
 function getParam(url, key) {
-    return new URL(url, "https://www.youtube.com/watch").searchParams.get(key);
+    try {
+        return new URL(url, "https://www.youtube.com/watch").searchParams.get(key);
+    } catch (err) {
+        if (err === TypeError) return null;
+        else handleUnexpectedErr(err);
+    }
 }
 
 function preventScrolling(event) {
@@ -143,4 +148,8 @@ function preventScrolling(event) {
 function log(time) {
     console.log(`time: ${time}`);
     console.log("prevent scrolling!");
+}
+
+function handleUnexpectedErr(err) {
+    console.log(err);
 }
