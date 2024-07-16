@@ -33,101 +33,95 @@ function return_time(ele, re) {
 
 // クリックした時
 document.addEventListener("click", (event) => {
+    const videoID = location.search.slice(3, 14);
 
-    // 動画再生ページかどうか
-    if (location.pathname == "/watch") {
+    const re = RegExp(`v=${videoID}&t=[0-9]+s`);
 
-        const videoID = location.search.slice(3, 14);
+    let target_ele = event.target;
 
-        const re = RegExp(`v=${videoID}&t=[0-9]+s`);
+    // web翻訳している場合のため
+    if (target_ele.tagName == "FONT" &&
 
-        let target_ele = event.target;
+        target_ele.getAttribute("style") == "vertical-align: inherit;" &&
 
-        // web翻訳している場合のため
-        if (target_ele.tagName == "FONT" &&
+        target_ele.parentElement &&
 
-            target_ele.getAttribute("style") == "vertical-align: inherit;" &&
+        target_ele.parentElement.tagName == "FONT" &&
 
-            target_ele.parentElement &&
+        target_ele.parentElement.getAttribute("style") == "vertical-align: inherit;" &&
 
-            target_ele.parentElement.tagName == "FONT" &&
-
-            target_ele.parentElement.getAttribute("style") == "vertical-align: inherit;" &&
-
-            target_ele.parentElement.parentElement
-        ) {
-            target_ele = target_ele.parentElement.parentElement;
-        }
-
-        // クリックしたリンクがタイムスタンプかどうか
-        if (target_ele.tagName == "A" &&
-
-            target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--call-to-action-color" &&
-
-            re.test(target_ele.getAttribute("href"))
-        ) {
-            const time = return_time(target_ele, re);
-
-            const videoEle = document.querySelector("video");
-
-            videoEle.currentTime = parseInt(time);
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-            event.stopImmediatePropagation();
-
-            // debug用
-            console.log(`time: ${time}`);
-            console.log("prevent scroll!");
-            return;
-        }
-
-        // 0秒の時
-        if (target_ele.tagName == "A" &&
-
-            target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--call-to-action-color" &&
-
-            target_ele.getAttribute("href") == `/watch?v=${videoID}`
-        ) {
-
-            const videoEle = document.querySelector("video");
-
-            videoEle.currentTime = 0;
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-            event.stopImmediatePropagation();
-
-            // debug用
-            console.log("time: 0");
-            console.log("prevent scroll!");
-            return;
-        }
-
-        // chapter
-        const endpoint = return_endpoint(target_ele, re);
-        if (endpoint) {
-            const time = return_time(endpoint, re);
-
-            const videoEle = document.querySelector("video");
-
-            videoEle.currentTime = parseInt(time);
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-            event.stopImmediatePropagation();
-
-            // debug用
-            console.log(`time: ${time}`);
-            console.log("prevent scroll!");
-            return;
-        }
+        target_ele.parentElement.parentElement
+    ) {
+        target_ele = target_ele.parentElement.parentElement;
     }
 
+    // クリックしたリンクがタイムスタンプかどうか
+    if (target_ele.tagName == "A" &&
+
+        target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--call-to-action-color" &&
+
+        re.test(target_ele.getAttribute("href"))
+    ) {
+        const time = return_time(target_ele, re);
+
+        const videoEle = document.querySelector("video");
+
+        videoEle.currentTime = parseInt(time);
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        event.stopImmediatePropagation();
+
+        // debug用
+        console.log(`time: ${time}`);
+        console.log("prevent scroll!");
+        return;
+    }
+
+    // 0秒の時
+    if (target_ele.tagName == "A" &&
+
+        target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--call-to-action-color" &&
+
+        target_ele.getAttribute("href") == `/watch?v=${videoID}`
+    ) {
+
+        const videoEle = document.querySelector("video");
+
+        videoEle.currentTime = 0;
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        event.stopImmediatePropagation();
+
+        // debug用
+        console.log("time: 0");
+        console.log("prevent scroll!");
+        return;
+    }
+
+    // chapter
+    const endpoint = return_endpoint(target_ele, re);
+    if (endpoint) {
+        const time = return_time(endpoint, re);
+
+        const videoEle = document.querySelector("video");
+
+        videoEle.currentTime = parseInt(time);
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        event.stopImmediatePropagation();
+
+        // debug用
+        console.log(`time: ${time}`);
+        console.log("prevent scroll!");
+        return;
+    }
 }, { capture: true })
