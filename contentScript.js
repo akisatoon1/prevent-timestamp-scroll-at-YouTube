@@ -27,18 +27,25 @@ function return_endpoint(ele, re) {
     return null;
 }
 
-function return_time(ele, re) {
-    return ele.getAttribute("href").match(re)[0].slice(16, -1);
+function getTime(re, ele) {
+    const time = ele.getAttribute("href").match(re)[0].slice(16, -1);
+    if (time === "") return 0;
+    else return time;
+}
+
+function changeVideoTime(time) {
+    document.querySelector("video").currentTime = parseInt(time);
 }
 
 // クリックした時
 document.addEventListener("click", (event) => {
     const videoID = location.search.slice(3, 14);
 
-    const re = RegExp(`v=${videoID}&t=[0-9]+s`);
+    const regexpTimestampUrl = RegExp(`v=${videoID}(&t=[0-9]+s)?`);
 
     let target_ele = event.target;
 
+    /*
     // web翻訳している場合のため
     if (target_ele.tagName == "FONT" &&
 
@@ -54,48 +61,23 @@ document.addEventListener("click", (event) => {
     ) {
         target_ele = target_ele.parentElement.parentElement;
     }
+    */
 
-    // クリックしたリンクがタイムスタンプかどうか
-    if (target_ele.tagName == "A" &&
-
-        target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--call-to-action-color" &&
-
-        re.test(target_ele.getAttribute("href"))
-    ) {
-        const time = return_time(target_ele, re);
-
-        const videoEle = document.querySelector("video");
-
-        videoEle.currentTime = parseInt(time);
-
-        preventScrolling(event);
-
-        log(time);
-        return;
-    }
-
-    // 0秒の時
-    if (target_ele.tagName == "A" &&
-
-        target_ele.classList.value == "yt-core-attributed-string__link yt-core-attributed-string__link--call-to-action-color" &&
-
-        target_ele.getAttribute("href") == `/watch?v=${videoID}`
-    ) {
-
-        const videoEle = document.querySelector("video");
-
-        videoEle.currentTime = 0;
-
-        preventScrolling(event);
-
-        log(0);
-        return;
+    // if only comment
+    if (isTimestamp(target_ele)) {
+        //web翻訳処理 toTimestamp();
+        if (isTimestampOnThisVideo(regexpTimestampUrl, target_ele)) {
+            const time = getTime(regexpTimestampUrl, target_ele);
+            changeVideoTime(time);
+            preventScrolling(event);
+            log(time);
+        }
     }
 
     // chapter
-    const endpoint = return_endpoint(target_ele, re);
+    const endpoint = return_endpoint(target_ele, regexpTimestampUrl);
     if (endpoint) {
-        const time = return_time(endpoint, re);
+        const time = getTime(endpoint, regexpTimestampUrl);
 
         const videoEle = document.querySelector("video");
 
@@ -107,6 +89,42 @@ document.addEventListener("click", (event) => {
         return;
     }
 }, { capture: true })
+
+//
+// "00:00" or "00:00:00" format is timestamp
+//
+
+function isTimestamp(ele) {
+    const shortFmt = "00:00";
+    const longFmt = "00:00:00";
+
+    const str = ele.textContent;
+    switch (str.length) {
+        case shortFmt.length:
+            return isTimestampFmt(str);
+        case longFmt.length:
+            return isTimestampFmt(str);
+        default:
+            return false;
+    }
+}
+
+function isTimestampFmt(str) {
+    for (let i = 0; i < str.length; i++) {
+        if (i % 3 == 2) {
+            if (str[i] !== ":") return false;
+        } else {
+            if (str[i] < "0" || "9" < str[i]) return false;
+        }
+    }
+    return true;
+}
+
+function isTimestampOnThisVideo(re, ele) {
+    const url = ele.getAttribute("href");
+    if (url === null) return false;
+    return re.test(url);
+}
 
 function preventScrolling(event) {
     event.preventDefault();
