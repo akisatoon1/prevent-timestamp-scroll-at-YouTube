@@ -27,9 +27,9 @@ function return_endpoint(ele, re) {
     return null;
 }
 
-function getTime(re, ele) {
-    const time = ele.getAttribute("href").match(re)[0].slice(16, -1);
-    if (time === "") return 0;
+function getTime(ele) {
+    const time = getParam(ele.getAttribute("href"), "t");
+    if (time === null) return "0";
     else return time;
 }
 
@@ -66,8 +66,8 @@ document.addEventListener("click", (event) => {
     // if only comment
     if (isTimestamp(target_ele)) {
         //web翻訳処理 toTimestamp();
-        if (isTimestampOnThisVideo(regexpTimestampUrl, target_ele)) {
-            const time = getTime(regexpTimestampUrl, target_ele);
+        if (isTimestampOnThisVideo(videoID, target_ele)) {
+            const time = getTime(target_ele);
             changeVideoTime(time);
             preventScrolling(event);
             log(time);
@@ -77,7 +77,7 @@ document.addEventListener("click", (event) => {
     // chapter
     const endpoint = return_endpoint(target_ele, regexpTimestampUrl);
     if (endpoint) {
-        const time = getTime(endpoint, regexpTimestampUrl);
+        const time = getTime(endpoint);
 
         const videoEle = document.querySelector("video");
 
@@ -120,10 +120,15 @@ function isTimestampFmt(str) {
     return true;
 }
 
-function isTimestampOnThisVideo(re, ele) {
+function isTimestampOnThisVideo(videoId, ele) {
     const url = ele.getAttribute("href");
     if (url === null) return false;
-    return re.test(url);
+    if (getParam(url, "v") === videoId) return true;
+    else return false;
+}
+
+function getParam(url, key) {
+    return new URL(url, "https://www.youtube.com/watch").searchParams.get(key);
 }
 
 function preventScrolling(event) {
