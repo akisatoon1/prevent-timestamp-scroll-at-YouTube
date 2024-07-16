@@ -68,15 +68,9 @@ document.addEventListener("click", (event) => {
 
         videoEle.currentTime = parseInt(time);
 
-        event.preventDefault();
+        preventScrolling(event);
 
-        event.stopPropagation();
-
-        event.stopImmediatePropagation();
-
-        // debug用
-        console.log(`time: ${time}`);
-        console.log("prevent scroll!");
+        log(time);
         return;
     }
 
@@ -92,15 +86,9 @@ document.addEventListener("click", (event) => {
 
         videoEle.currentTime = 0;
 
-        event.preventDefault();
+        preventScrolling(event);
 
-        event.stopPropagation();
-
-        event.stopImmediatePropagation();
-
-        // debug用
-        console.log("time: 0");
-        console.log("prevent scroll!");
+        log(0);
         return;
     }
 
@@ -113,15 +101,21 @@ document.addEventListener("click", (event) => {
 
         videoEle.currentTime = parseInt(time);
 
-        event.preventDefault();
+        preventScrolling(event);
 
-        event.stopPropagation();
-
-        event.stopImmediatePropagation();
-
-        // debug用
-        console.log(`time: ${time}`);
-        console.log("prevent scroll!");
+        log(time);
         return;
     }
 }, { capture: true })
+
+function preventScrolling(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+}
+
+// if successful
+function log(time) {
+    console.log(`time: ${time}`);
+    console.log("prevent scrolling!");
+}
