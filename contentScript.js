@@ -63,10 +63,10 @@ document.addEventListener("click", (event) => {
     }
     */
 
-    // if only comment
+    // if timestamp, handle timestamp
     if (isTimestamp(target_ele)) {
         //web翻訳処理 toTimestamp();
-        if (isTimestampOnThisVideo(videoID, target_ele)) {
+        if (isOnThisVideo(videoID, target_ele)) {
             const time = getTime(target_ele);
             changeVideoTime(time);
             preventScrolling(event);
@@ -98,12 +98,12 @@ function isTimestamp(ele) {
     const shortFmt = "00:00";
     const longFmt = "00:00:00";
 
-    const str = ele.textContent;
-    switch (str.length) {
+    const text = ele.textContent;
+    switch (text.length) {
         case shortFmt.length:
-            return isTimestampFmt(str);
+            return isTimestampFmt(text);
         case longFmt.length:
-            return isTimestampFmt(str);
+            return isTimestampFmt(text);
         default:
             return false;
     }
@@ -120,9 +120,11 @@ function isTimestampFmt(str) {
     return true;
 }
 
-function isTimestampOnThisVideo(videoId, ele) {
+// 'href' field value must have param as 'v=[videoId]'
+function isOnThisVideo(videoId, ele) {
     const url = ele.getAttribute("href");
     if (url === null) return false;
+
     if (getParam(url, "v") === videoId) return true;
     else return false;
 }
