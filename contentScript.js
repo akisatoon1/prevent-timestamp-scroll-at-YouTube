@@ -1,30 +1,32 @@
 "use strict";
 
 document.addEventListener("click", (event) => {
-    const videoID = location.search.slice(3, 14);
+    if (location.pathname === "/watch") {
+        const videoID = location.search.slice(3, 14);
 
-    const targetEle = event.target;
+        const targetEle = event.target;
 
-    // if timestamp, handle timestamp
-    if (isTimestamp(targetEle)) {
-        const linkEle = toOriginal(targetEle);
-        if (isOnThisVideo(videoID, linkEle)) {
-            const time = getTime(linkEle);
+        // if timestamp, handle timestamp
+        if (isTimestamp(targetEle)) {
+            const linkEle = toOriginal(targetEle);
+            if (isOnThisVideo(videoID, linkEle)) {
+                const time = getTime(linkEle);
+                changeVideoTime(time);
+                preventScrolling(event);
+                log(time);
+                return;
+            }
+        }
+
+        // chapter
+        const endpoint = getEndpoint(videoID, toOriginal(targetEle));
+        if (endpoint) {
+            const time = getTime(endpoint);
             changeVideoTime(time);
             preventScrolling(event);
             log(time);
             return;
         }
-    }
-
-    // chapter
-    const endpoint = getEndpoint(videoID, toOriginal(targetEle));
-    if (endpoint) {
-        const time = getTime(endpoint);
-        changeVideoTime(time);
-        preventScrolling(event);
-        log(time);
-        return;
     }
 }, { capture: true })
 
