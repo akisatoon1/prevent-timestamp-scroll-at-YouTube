@@ -43,31 +43,13 @@ document.addEventListener("click", (event) => {
 
     const regexpTimestampUrl = RegExp(`v=${videoID}(&t=[0-9]+s)?`);
 
-    let target_ele = event.target;
-
-    /*
-    // web翻訳している場合のため
-    if (target_ele.tagName == "FONT" &&
-
-        target_ele.getAttribute("style") == "vertical-align: inherit;" &&
-
-        target_ele.parentElement &&
-
-        target_ele.parentElement.tagName == "FONT" &&
-
-        target_ele.parentElement.getAttribute("style") == "vertical-align: inherit;" &&
-
-        target_ele.parentElement.parentElement
-    ) {
-        target_ele = target_ele.parentElement.parentElement;
-    }
-    */
+    const targetEle = event.target;
 
     // if timestamp, handle timestamp
-    if (isTimestamp(target_ele)) {
-        //web翻訳処理 toTimestamp();
-        if (isOnThisVideo(videoID, target_ele)) {
-            const time = getTime(target_ele);
+    if (isTimestamp(targetEle)) {
+        const linkEle = toOriginal(targetEle);
+        if (isOnThisVideo(videoID, linkEle)) {
+            const time = getTime(linkEle);
             changeVideoTime(time);
             preventScrolling(event);
             log(time);
@@ -76,7 +58,7 @@ document.addEventListener("click", (event) => {
     }
 
     // chapter
-    const endpoint = getEndpoint(videoID, target_ele);
+    const endpoint = getEndpoint(videoID, toOriginal(targetEle));
     if (endpoint) {
         const time = getTime(endpoint);
 
@@ -117,6 +99,12 @@ function isTimestampFmt(str) {
         }
     }
     return true;
+}
+
+// if web translation
+function toOriginal(ele) {
+    if (ele.tagName === "FONT") return ele.parentElement.parentElement;
+    else return ele;
 }
 
 // 'href' field value must have param as 'v=[videoId]'
