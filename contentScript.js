@@ -6,20 +6,20 @@
 //
 
 // chapterのendpointか判定
-function is_endpoint(ele, re) {
+function isEndpoint(videoId, ele) {
     return (ele &&
-        ele.tagName == "A" &&
-        ele.getAttribute("id") == "endpoint" &&
-        ele.classList.value == "yt-simple-endpoint style-scope ytd-macro-markers-list-item-renderer" &&
-        re.test(ele.getAttribute("href"))
+        ele.tagName === "A" &&
+        ele.getAttribute("id") === "endpoint" &&
+        getParam(ele.getAttribute("href"), "v") === videoId &&
+        getParam(ele.getAttribute("href"), "t") !== null
     );
 }
 
 // chapterのendpointを返す
-function return_endpoint(ele, re) {
+function getEndpoint(videoId, ele) {
     for (let i = 0; i < 4; i++) {
         if (!ele) break;
-        if (is_endpoint(ele, re)) {
+        if (isEndpoint(videoId, ele)) {
             return ele;
         }
         ele = ele.parentElement;
@@ -71,17 +71,16 @@ document.addEventListener("click", (event) => {
             changeVideoTime(time);
             preventScrolling(event);
             log(time);
+            return;
         }
     }
 
     // chapter
-    const endpoint = return_endpoint(target_ele, regexpTimestampUrl);
+    const endpoint = getEndpoint(videoID, target_ele);
     if (endpoint) {
         const time = getTime(endpoint);
 
-        const videoEle = document.querySelector("video");
-
-        videoEle.currentTime = parseInt(time);
+        changeVideoTime(time);
 
         preventScrolling(event);
 
