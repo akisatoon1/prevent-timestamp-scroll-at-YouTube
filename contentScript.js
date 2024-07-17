@@ -1,6 +1,35 @@
 "use strict";
 
+document.addEventListener("click", (event) => {
+    const videoID = location.search.slice(3, 14);
+
+    const targetEle = event.target;
+
+    // if timestamp, handle timestamp
+    if (isTimestamp(targetEle)) {
+        const linkEle = toOriginal(targetEle);
+        if (isOnThisVideo(videoID, linkEle)) {
+            const time = getTime(linkEle);
+            changeVideoTime(time);
+            preventScrolling(event);
+            log(time);
+            return;
+        }
+    }
+
+    // chapter
+    const endpoint = getEndpoint(videoID, toOriginal(targetEle));
+    if (endpoint) {
+        const time = getTime(endpoint);
+        changeVideoTime(time);
+        preventScrolling(event);
+        log(time);
+        return;
+    }
+}, { capture: true })
+
 //
+// endpointとはvideoのタイム付きのリンク
 // chapterをクリックするとき、endpointの子要素のどれかをクリックすることになる。
 // 最大3回まで親要素をたどって、endpointが見つける。
 //
@@ -27,50 +56,6 @@ function getEndpoint(videoId, ele) {
     return null;
 }
 
-function getTime(ele) {
-    const time = getParam(ele.getAttribute("href"), "t");
-    if (time === null) return "0";
-    else return time;
-}
-
-function changeVideoTime(time) {
-    document.querySelector("video").currentTime = parseInt(time);
-}
-
-// クリックした時
-document.addEventListener("click", (event) => {
-    const videoID = location.search.slice(3, 14);
-
-    const regexpTimestampUrl = RegExp(`v=${videoID}(&t=[0-9]+s)?`);
-
-    const targetEle = event.target;
-
-    // if timestamp, handle timestamp
-    if (isTimestamp(targetEle)) {
-        const linkEle = toOriginal(targetEle);
-        if (isOnThisVideo(videoID, linkEle)) {
-            const time = getTime(linkEle);
-            changeVideoTime(time);
-            preventScrolling(event);
-            log(time);
-            return;
-        }
-    }
-
-    // chapter
-    const endpoint = getEndpoint(videoID, toOriginal(targetEle));
-    if (endpoint) {
-        const time = getTime(endpoint);
-
-        changeVideoTime(time);
-
-        preventScrolling(event);
-
-        log(time);
-        return;
-    }
-}, { capture: true })
-
 //
 // "00:00" or "00:00:00" format is timestamp
 //
@@ -90,6 +75,7 @@ function isTimestamp(ele) {
     }
 }
 
+// format "00:00:00: ..."
 function isTimestampFmt(str) {
     for (let i = 0; i < str.length; i++) {
         if (i % 3 == 2) {
@@ -101,19 +87,20 @@ function isTimestampFmt(str) {
     return true;
 }
 
-// if web translation
-function toOriginal(ele) {
-    if (ele.tagName === "FONT") return ele.parentElement.parentElement;
-    else return ele;
-}
-
-// 'href' field value must have param as 'v=[videoId]'
+// 別動画へのタイムスタンプもあるため
+// timestamp link's 'href' field value must have param as 'v=[videoId]'
 function isOnThisVideo(videoId, ele) {
     const url = ele.getAttribute("href");
     if (url === null) return false;
 
     if (getParam(url, "v") === videoId) return true;
     else return false;
+}
+
+// if web translation
+function toOriginal(ele) {
+    if (ele.tagName === "FONT") return ele.parentElement.parentElement;
+    else return ele;
 }
 
 function getParam(url, key) {
@@ -123,6 +110,17 @@ function getParam(url, key) {
         if (err === TypeError) return null;
         else handleUnexpectedErr(err);
     }
+}
+
+// get time seconds from link url
+function getTime(ele) {
+    const time = getParam(ele.getAttribute("href"), "t");
+    if (time === null) return "0";
+    else return time;
+}
+
+function changeVideoTime(time) {
+    document.querySelector("video").currentTime = parseInt(time);
 }
 
 function preventScrolling(event) {
