@@ -58,35 +58,27 @@ function getEndpoint(videoId, ele) {
     return null;
 }
 
-//
-// "00:00" or "00:00:00" format is timestamp
-//
 
+// timestamp format is "(0(0):)0(0):00"
+// () is or
 function isTimestamp(ele) {
-    const shortFmt = "00:00";
-    const longFmt = "00:00:00";
+    let str = ele.textContent;
 
-    const text = ele.textContent;
-    switch (text.length) {
-        case shortFmt.length:
-            return isTimestampFmt(text);
-        case longFmt.length:
-            return isTimestampFmt(text);
-        default:
-            return false;
-    }
-}
-
-// format "00:00:00: ..."
-function isTimestampFmt(str) {
+    let ctColon = 0
+    let ctNumBtwColon = 0
     for (let i = 0; i < str.length; i++) {
-        if (i % 3 == 2) {
-            if (str[i] !== ":") return false;
-        } else {
-            if (str[i] < "0" || "9" < str[i]) return false;
-        }
+        if (str[i] === ":")
+            if (ctNumBtwColon === 1 || ctNumBtwColon === 2) {
+                ctNumBtwColon = 0;
+                ctColon++;
+            }
+            else return false
+
+        else if ("0" <= str[i] && str[i] <= "9") ctNumBtwColon++
+        else return false;
     }
-    return true;
+    if (ctNumBtwColon === 2 && (ctColon === 1 || ctColon === 2)) return true;
+    else return false;
 }
 
 // 別動画へのタイムスタンプもあるため
